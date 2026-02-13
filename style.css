@@ -8,8 +8,18 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-  margin:0; font-family:Inter,Segoe UI,Arial,sans-serif; background:linear-gradient(180deg,#071028 0%, #0b1220 100%); color:#e6eef6; display:flex; align-items:center; justify-content:center; padding:24px;
+body {
+  margin: 0;
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+  /* REPLACE THE EXISTING background LINE WITH THESE 5 LINES: */
+  background: 
+    linear-gradient(180deg, rgba(7, 16, 40, 0.88), rgba(11, 18, 32, 0.92)), 
+    url('materials/X.jpg') center/cover no-repeat fixed;
+  color: #e6eef6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
 .app{width:100%; max-width:920px}
 .header{display:flex; align-items:center; justify-content:space-between; gap:12px}

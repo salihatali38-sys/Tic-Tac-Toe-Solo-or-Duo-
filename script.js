@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const singleBtn = document.getElementById('singlePlayerBtn');
   const startBtn = document.getElementById('startBtn');
   const restartBtn = document.getElementById('restartBtn');
-  const resetBtn = document.getElementById('resetBtn');
   const msgEl = document.getElementById('message');
   const boardEl = document.getElementById('board');
   const cells = Array.from(document.querySelectorAll('.cell'));
@@ -19,10 +18,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     [0,4,8],[2,4,6]
   ];
 
+
+  //before the game starts or ends
   let board = Array(9).fill('');
   let current = 'X';
   let playing = false;
-  let gameMode = null; // 'single' or 'two'
+  let gameMode = null; //current game mode
   let scores = {X:0,O:0,draw:0};
 
   function setMode(mode){
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function restartRound(){ startGame(); }
-  function resetAll(){ scores={X:0,O:0,draw:0}; updateScores(); startGame(); }
+  
 
   function updateScores(){ scoreXEl.textContent = scores.X; scoreOEl.textContent = scores.O; scoreDrawEl.textContent = scores.draw; }
 
@@ -122,9 +123,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Wire events
   twoBtn.addEventListener('click', ()=>setMode('two'));
   singleBtn.addEventListener('click', ()=>setMode('single'));
-  startBtn.addEventListener('click', ()=>{ if(!gameMode) return msg('Choose a mode first.'); startGame(); updateScores(); });
+  startBtn.addEventListener('click', ()=>{
+  if(!gameMode) return msg('Choose a mode first.');
+  scores = {X:0, O:0, draw:0}; 
+  updateScores();               
+  startGame();});
   restartBtn.addEventListener('click', ()=>restartRound());
-  resetBtn.addEventListener('click', ()=>resetAll());
+  
   cells.forEach(c=>c.addEventListener('click', handleCellClick));
 
   // default
