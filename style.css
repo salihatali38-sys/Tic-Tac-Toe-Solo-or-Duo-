@@ -1,0 +1,41 @@
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --accent:#6ee7b7;
+  --danger:#ff6b6b;
+  --muted:#9aa4b2;
+  --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,Segoe UI,Arial,sans-serif; background:linear-gradient(180deg,#071028 0%, #0b1220 100%); color:#e6eef6; display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.app{width:100%; max-width:920px}
+.header{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.header h1{font-size:1.25rem; margin:0}
+.mode-select{display:flex; gap:8px}
+.mode-btn{background:var(--glass); color:var(--accent); border:1px solid rgba(255,255,255,0.04); padding:8px 12px; border-radius:8px; cursor:pointer}
+.mode-btn.active{background:linear-gradient(90deg,#072f2c,#06343a); color:#d6fff0}
+.controls{display:flex; align-items:center; gap:16px; margin:18px 0; flex-wrap:wrap}
+.names input{padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:inherit}
+.scoreboard{display:flex; gap:12px; align-items:center}
+.score{background:var(--glass); padding:8px 10px; border-radius:8px}
+.actions{display:flex; gap:8px}
+.primary{background:var(--accent); color:#042018; border:none; padding:8px 12px; border-radius:8px; cursor:pointer}
+.board-wrap{display:flex; justify-content:center}
+.board{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(560px,90vw)}
+.cell{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:3.5rem; border-radius:12px; cursor:pointer; user-select:none; transition:transform .12s ease, box-shadow .12s ease}
+.cell:hover{transform:translateY(-4px)}
+.cell.x{color:#7ee7ff}
+.cell.o{color:#ffd07a}
+.cell.invalid{animation:flash .35s}
+@keyframes flash{0%{box-shadow:0 0 0 rgba(255,0,0,0)}50%{box-shadow:0 6px 18px rgba(255,0,0,0.14)}100%{box-shadow:0 0 0 rgba(255,0,0,0)}}
+.cell.win{outline:4px solid rgba(110,231,183,0.12); box-shadow:0 6px 24px rgba(110,231,183,0.12); transform:scale(1.03)}
+.message{margin-top:18px; min-height:28px; font-weight:600}
+
+@media (max-width:520px){
+  .header h1{font-size:1rem}
+  .cell{font-size:2.6rem}
+  .controls{flex-direction:column; align-items:stretch}
+}
