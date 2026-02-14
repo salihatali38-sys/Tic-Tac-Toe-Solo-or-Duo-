@@ -7,29 +7,49 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
+  <!-- SETUP OVERLAY (Modal) -->
+  <div id="setupOverlay" class="setup-overlay">
+    <div class="setup-container">
+      <h1 class="setup-title">🎮 Tic Tac Toe for dummies 🤡</h1>
+      
+      <div class="setup-instructions">
+        <p>Choose your game mode and enter player names</p>
+      </div>
+      
+      <!-- Mode Selection -->
+      <div class="setup-mode-select">
+        <button id="twoPlayerBtn" class="setup-mode-btn">2 Player</button>
+        <button id="singlePlayerBtn" class="setup-mode-btn">Single Player</button>
+      </div>
+      
+      <!-- Name Inputs -->
+      <div class="setup-names">
+        <input id="playerXName" placeholder="Player X name (optional)" maxlength="15" />
+        <input id="playerOName" placeholder="Player O name (optional)" maxlength="15" />
+      </div>
+      
+      <!-- Setup Message -->
+      <div id="setupMessage" class="setup-message"></div>
+      
+      <!-- Start Button -->
+      <button id="startBtn" class="setup-start-btn">🎮 Start Game</button>
+    </div>
+  </div>
+
+  <!-- MAIN GAME (hidden initially) -->
+  <main class="app hidden">
     <header class="header">
       <h1>Tic Tac Toe for dummies 🤡</h1>
-      <div class="mode-select">
-        <button id="twoPlayerBtn" class="mode-btn">2 Player</button>
-        <button id="singlePlayerBtn" class="mode-btn">Single Player</button>
-      </div>
     </header>
 
     <section class="controls">
-      <div class="names">
-        <input id="playerXName" placeholder="Player X name (optional)" />
-        <input id="playerOName" placeholder="Player O / Computer name (optional)" />
-      </div>
       <div class="scoreboard">
         <div class="score">X: <span id="scoreX">0</span></div>
         <div class="score">Draws: <span id="scoreDraw">0</span></div>
         <div class="score">O: <span id="scoreO">0</span></div>
       </div>
       <div class="actions">
-        <button id="startBtn" class="primary">Start Game</button>
         <button id="restartBtn">Restart Round</button>
-        
       </div>
     </section>
 
