@@ -65,35 +65,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function startGame(){
-    // Reset everything
-    board.fill('');
-    cells.forEach(c=>{
-      c.className='cell';
-      c.textContent='';
-    });
-    current = 'X';
-    playing = true;
-    scores = {X:0, O:0, draw:0};
-    updateScores();
-    
-    msg(`${getCurrentName()}'s turn (${current})`);
-    
-    // Trigger computer if needed
-    if(gameMode==='single' && current==='O'){
-      triggerComputer();
-    }
+  board.fill(''); cells.forEach(c=>{c.className='cell'; c.textContent='';});
+  current = 'X'; playing = true; 
+  msg(`${getCurrentName()}'s turn (${current})`);
+  
+  // NEW: Update restart button state
+  updateRestartButtonState();
+  
+  if(gameMode==='single' && current==='O') triggerComputer();
   }
 
   function restartRound(){
-    // Just restart the round, keep scores
-    board.fill('');
-    cells.forEach(c=>{
-      c.className='cell';
-      c.textContent='';
-    });
-    current = 'X';
-    playing = true;
-    msg(`${getCurrentName()}'s turn (${current})`);
+  // Just restart the round, keep scores
+  board.fill('');
+  cells.forEach(c=>{
+    c.className='cell';
+    c.textContent='';
+  });
+  current = 'X';
+  playing = true;
+  msg(`${getCurrentName()}'s turn (${current})`);
+  
+  // NEW: Update restart button state after restart
+  updateRestartButtonState();
   }
 
   function updateScores(){
@@ -101,7 +95,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     scoreOEl.textContent = scores.O;
     scoreDrawEl.textContent = scores.draw;
   }
-
+  function updateRestartButtonState() {
+  // Disable restart in single-player mode WHILE playing
+  restartBtn.disabled = (gameMode === 'single' && playing);
+  
+  // Visual feedback: add/remove disabled class
+  restartBtn.classList.toggle('disabled', restartBtn.disabled);
+  }
   function getCurrentName(){
     return current==='X' ? (nameX.value || 'Player X') : (nameO.value || (gameMode==='single' ? 'Computer' : 'Player O'));
   }
@@ -134,24 +134,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function checkEnd(){
-    const winner = checkWinner(board);
-    if(winner){
-      playing=false;
-      highlightWin(winner.combo);
-      scores[winner.player]++;
-      updateScores();
-      msg(`${getNameFor(winner.player)} wins!`);
-      return true;
-    }
-    if(board.every(Boolean)){
-      playing=false;
-      scores.draw++;
-      updateScores();
-      msg('Draw!');
-      return true;
-    }
-    return false;
+  const winner = checkWinner(board);
+  if(winner){ 
+    playing=false; 
+    // NEW: Enable restart button when round ends
+    updateRestartButtonState();
+    highlightWin(winner.combo); scores[winner.player]++; updateScores(); msg(`${getNameFor(winner.player)} wins!`); return true; 
   }
+  if(board.every(Boolean)){ 
+    playing=false; 
+    // NEW: Enable restart button when round ends
+    updateRestartButtonState();
+    scores.draw++; updateScores(); msg('Draw!'); return true; 
+  }
+  return false;
+}
 
   function getNameFor(sym){
     return sym==='X' ? (nameX.value||'Player X') : (nameO.value || (gameMode==='single' ? 'Computer' : 'Player O'));

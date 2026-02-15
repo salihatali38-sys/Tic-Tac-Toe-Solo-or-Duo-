@@ -156,6 +156,17 @@
   visibility: hidden;
 }
 
+
+/* Disabled restart button styling */
+.actions button:disabled,
+.actions button.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
+}
 :root{
   --bg:#0f1724;
   --card:#0b1220;
