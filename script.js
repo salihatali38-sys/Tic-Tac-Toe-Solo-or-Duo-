@@ -17,6 +17,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const nameX = document.getElementById('playerXName');
   const nameO = document.getElementById('playerOName');
 
+
+    // Victory Modal Elements
+  const victoryModal = document.getElementById('victoryModal');
+  const victoryTitle = document.getElementById('victoryTitle');
+  const victoryMessage = document.getElementById('victoryMessage');
+  const modalScoreX = document.getElementById('modalScoreX');
+  const modalScoreO = document.getElementById('modalScoreO');
+  const modalScoreDraw = document.getElementById('modalScoreDraw');
+  const nextRoundBtn = document.getElementById('nextRoundBtn');
+  const newGameBtn = document.getElementById('newGameBtn');
   const WIN_COMBOS = [
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
@@ -29,6 +39,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   let playing = false;
   let gameMode = null; //current game mode
   let scores = {X:0,O:0,draw:0};
+  let lastWinner = null;
+  let victoryIcon = document.querySelector('.victory-icon'); // For emoji changes
 
   // ===== SETUP OVERLAY FUNCTIONS 
   function setupMsg(text){
@@ -65,8 +77,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   function startGame(){
-  board.fill(''); cells.forEach(c=>{c.className='cell'; c.textContent='';});
-  current = 'X'; playing = true; 
+  board.fill(''); 
+  cells.forEach(c=>{c.className='cell'; c.textContent='';});
+  current = 'X'; 
+  playing = true; 
+  lastWinner = null; // ← RESET WINNER TRACKER
   msg(`${getCurrentName()}'s turn (${current})`);
   
   // NEW: Update restart button state
@@ -75,19 +90,60 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if(gameMode==='single' && current==='O') triggerComputer();
   }
 
-  function restartRound(){
+
+  function showVictoryModal(winnerSymbol) {
+  // Update scores in modal
+    modalScoreX.textContent = scores.X;
+    modalScoreO.textContent = scores.O;
+    modalScoreDraw.textContent = scores.draw;
+  
+  // Show different messages based on result
+  if(winnerSymbol === 'X') {
+    victoryTitle.textContent = '🏆 X Wins! 🏆';
+    victoryTitle.className = 'victory-title x-wins';
+    victoryMessage.textContent = `${getNameFor('X')} is the champion!`;
+    victoryIcon.textContent = '👑';
+  } else if(winnerSymbol === 'O') {
+    victoryTitle.textContent = '🏆 O Wins! 🏆';
+    victoryTitle.className = 'victory-title o-wins';
+    victoryMessage.textContent = `${getNameFor('O')} takes the victory!`;
+    victoryIcon.textContent = '👑';
+  } else {
+    // Draw
+    victoryTitle.textContent = '🤝 It\'s a Draw! 🤝';
+    victoryTitle.className = 'victory-title draw';
+    victoryMessage.textContent = 'No winner this time!';
+    victoryIcon.textContent = '🤝';
+  }
+  
+  // Show modal
+  victoryModal.classList.remove('hidden');
+  
+  // Disable game board while modal is open
+  playing = false;
+  }
+  // NEW: Restarts round without resetting scores
+ function restartRound(){
   // Just restart the round, keep scores
   board.fill('');
   cells.forEach(c=>{
     c.className='cell';
     c.textContent='';
   });
-  current = 'X';
+  
+  // Winner starts next round, or X if draw
+  current = lastWinner || 'X';
+  
   playing = true;
   msg(`${getCurrentName()}'s turn (${current})`);
   
-  // NEW: Update restart button state after restart
+  // Update restart button state after restart
   updateRestartButtonState();
+  
+  // If it's single-player and O's turn, trigger computer
+  if(gameMode==='single' && current==='O') {
+    triggerComputer();
+  }
   }
 
   function updateScores(){
@@ -133,22 +189,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
     msg(`${getCurrentName()}'s turn (${current})`);
   }
 
+
+  //checks if there's a winner or draw after each move
   function checkEnd(){
   const winner = checkWinner(board);
   if(winner){ 
     playing=false; 
-    // NEW: Enable restart button when round ends
+    lastWinner = winner.player;
     updateRestartButtonState();
-    highlightWin(winner.combo); scores[winner.player]++; updateScores(); msg(`${getNameFor(winner.player)} wins!`); return true; 
+    highlightWin(winner.combo); 
+    scores[winner.player]++; 
+    updateScores(); 
+    showVictoryModal(winner.player); // SHOW MODAL INSTEAD OF msg()
+    return true; 
   }
   if(board.every(Boolean)){ 
     playing=false; 
-    // NEW: Enable restart button when round ends
+    lastWinner = null;
     updateRestartButtonState();
-    scores.draw++; updateScores(); msg('Draw!'); return true; 
+    scores.draw++; 
+    updateScores(); 
+    showVictoryModal('draw'); // SHOW DRAW MODAL
+    return true; 
   }
   return false;
-}
+  }
 
   function getNameFor(sym){
     return sym==='X' ? (nameX.value||'Player X') : (nameO.value || (gameMode==='single' ? 'Computer' : 'Player O'));
@@ -205,12 +270,26 @@ document.addEventListener('DOMContentLoaded', ()=>{
     return WIN_COMBOS.some(c=> simBoard[c[0]]===sym && simBoard[c[1]]===sym && simBoard[c[2]]===sym);
   }
 
-  // ===== EVENT LISTENERS =====
+  //  EVENT LISTENERS 
   
   // Setup overlay buttons
   twoBtn.addEventListener('click', ()=>setMode('two'));
   singleBtn.addEventListener('click', ()=>setMode('single'));
   
+
+  // Victory Modal Buttons
+  nextRoundBtn.addEventListener('click', () => {
+  victoryModal.classList.add('hidden');
+  restartRound();
+  });
+
+  newGameBtn.addEventListener('click', () => {
+  victoryModal.classList.add('hidden');
+  // Return to setup overlay
+  appContainer.classList.add('hidden');
+  setupOverlay.classList.remove('hidden');
+  setupOverlay.classList.remove('fade-out');
+  });
   // Start button - hides overlay and starts game
   startBtn.addEventListener('click', ()=>{
     if(!gameMode){
@@ -231,7 +310,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Cell click handlers
   cells.forEach(c=>c.addEventListener('click', handleCellClick));
 
-  // ===== DEFAULT STATE =====
+  //  DEFAULT STATE =====
   // Show setup overlay by default, app is hidden
   setMode('two'); // Default to two-player mode
 });

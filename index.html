@@ -68,6 +68,34 @@
     </section>
 
     <div id="message" class="message" aria-live="polite"></div>
+    <!-- Victory Modal -->
+    <div id="victoryModal" class="victory-modal hidden">
+      <div class="victory-content">
+        <div class="victory-icon">🎉</div>
+        <h2 class="victory-title" id="victoryTitle">Winner!</h2>
+        <p class="victory-message" id="victoryMessage"></p>
+        
+        <div class="victory-scores">
+          <div class="score-item">
+            <span class="score-label">X Wins</span>
+            <span class="score-number" id="modalScoreX">0</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">Draws</span>
+            <span class="score-number" id="modalScoreDraw">0</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">O Wins</span>
+            <span class="score-number" id="modalScoreO">0</span>
+          </div>
+        </div>
+        
+        <div class="victory-buttons">
+          <button id="nextRoundBtn" class="victory-btn primary">Next Round</button>
+          <button id="newGameBtn" class="victory-btn secondary">New Game</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <script src="script.js"></script>
